@@ -12,6 +12,6 @@ object Parser {
 
 sealed abstract class ParseResult
 
-final class ParseSuccess[T](val result: T, val next: String) extends ParseResult
+final case class ParseSuccess[T](val result: T, val next: String) extends ParseResult
 
-final class ParseFailure extends ParseResult
+final case class ParseFailure(val errorMessage: String) extends ParseResult
