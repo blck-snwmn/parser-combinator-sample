@@ -10,8 +10,8 @@ object Parser {
   def apply(input: String): Parser = new Parser(input)
 }
 
-abstract class ParseResult
+sealed abstract class ParseResult
 
-class ParseSuccess[T](val result: T, val next: String) extends ParseResult
+final class ParseSuccess[T](val result: T, val next: String) extends ParseResult
 
-class ParseFailure extends ParseResult
+final class ParseFailure extends ParseResult
