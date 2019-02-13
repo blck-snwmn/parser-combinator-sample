@@ -1,17 +1,22 @@
 package parser
 
-class Parser(val input: String) {
-  def parse(target: String): ParseResult = {
-    target.startsWith(input) match {
-      case true => new ParseSuccess[String]("", "")
-      case false => new ParseFailure("")
-    }
+class Parser[T](parser: T => ParseResult) {
+  def parse(target: T): ParseResult = {
+    parser(target)
   }
 }
 
 object Parser {
-  def apply(input: String): Parser = new Parser(input)
+  def apply(input: String): Parser[String] = new Parser[String](
+    { target =>
+      target.startsWith(input) match {
+        case true => new ParseSuccess[String]("", "")
+        case false => new ParseFailure("")
+      }
+    }
+  )
 }
+
 
 sealed abstract class ParseResult
 
