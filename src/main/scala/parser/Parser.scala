@@ -2,7 +2,10 @@ package parser
 
 class Parser(val input: String) {
   def parse(target: String): ParseResult = {
-    new ParseSuccess[String]("", "")
+    target.startsWith(input) match {
+      case true => new ParseSuccess[String]("", "")
+      case false => new ParseFailure("")
+    }
   }
 }
 
