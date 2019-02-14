@@ -11,8 +11,8 @@ object Parser {
 
   def apply(input: String): Parser[String] = Parser[String]({ target =>
     target.startsWith(input) match {
-      case true => new ParseSuccess[String]("", "")
-      case false => new ParseFailure("")
+      case true => new ParseSuccess[String](input, target.substring(input.length))
+      case false => new ParseFailure(s"parse error. expected:$input")
     }
   })
 }
