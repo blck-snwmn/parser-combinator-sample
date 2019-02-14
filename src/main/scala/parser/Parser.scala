@@ -7,14 +7,12 @@ class Parser[T](parser: T => ParseResult) {
 }
 
 object Parser {
-  def apply(input: String): Parser[String] = new Parser[String](
-    { target =>
-      target.startsWith(input) match {
-        case true => new ParseSuccess[String]("", "")
-        case false => new ParseFailure("")
-      }
+  def apply(input: String): Parser[String] = new Parser[String]({ target =>
+    target.startsWith(input) match {
+      case true => new ParseSuccess[String]("", "")
+      case false => new ParseFailure("")
     }
-  )
+  })
 }
 
 
