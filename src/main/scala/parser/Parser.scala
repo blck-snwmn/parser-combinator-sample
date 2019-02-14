@@ -7,7 +7,9 @@ class Parser[T](parser: T => ParseResult) {
 }
 
 object Parser {
-  def apply(input: String): Parser[String] = new Parser[String]({ target =>
+  def apply[T](parser: T => ParseResult): Parser[T] = new Parser(parser)
+
+  def apply(input: String): Parser[String] = Parser[String]({ target =>
     target.startsWith(input) match {
       case true => new ParseSuccess[String]("", "")
       case false => new ParseFailure("")
