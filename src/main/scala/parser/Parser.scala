@@ -7,7 +7,7 @@ class Parser[T](parser: String => ParseResult[T]) {
     parser(target)
   }
 
-  def many(): Parser[List[T]] = Parser({ target =>
+  def many(): Parser[List[T]] = Parser { target =>
     def parseRecursively(result: mutable.ListBuffer[T], next: String): ParseResult[List[T]] = {
       parse(next) match {
         case ParseSuccess(r, n) => {
@@ -19,18 +19,18 @@ class Parser[T](parser: String => ParseResult[T]) {
     }
 
     parseRecursively(mutable.ListBuffer.empty, target)
-  })
+  }
 }
 
 object Parser {
   def apply[T](parser: String => ParseResult[T]): Parser[T] = new Parser(parser)
 
-  def apply(input: String): Parser[String] = Parser[String]({ target =>
+  def apply(input: String): Parser[String] = Parser[String] { target =>
     target.startsWith(input) match {
       case true => new ParseSuccess[String](input, target.substring(input.length))
       case false => new ParseFailure(s"parse error. expected:$input")
     }
-  })
+  }
 
   def many(input: String): Parser[List[String]] = {
     Parser(input).many
