@@ -7,9 +7,9 @@ class ParserSpec extends WordSpec with Matchers {
     "return success" in {
       Parser("a").parse("abb") shouldBe a[ParseSuccess[_]]
       Parser("a").parse("a") shouldBe
-        new ParseSuccess[String]("a", "")
+        new ParseSuccess("a", "")
       Parser("a").parse("abb") shouldBe
-        new ParseSuccess[String]("a", "bb")
+        new ParseSuccess("a", "bb")
     }
     "return false" in {
       Parser("b").parse("aaa") shouldBe a[ParseFailure]
