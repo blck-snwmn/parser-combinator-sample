@@ -1,13 +1,13 @@
 package parser
 
-class Parser[T](parser: T => ParseResult) {
-  def parse(target: T): ParseResult = {
+class Parser[T](parser: T => ParseResult[T]) {
+  def parse(target: T): ParseResult[T] = {
     parser(target)
   }
 }
 
 object Parser {
-  def apply[T](parser: T => ParseResult): Parser[T] = new Parser(parser)
+  def apply[T](parser: T => ParseResult[T]): Parser[T] = new Parser(parser)
 
   def apply(input: String): Parser[String] = Parser[String]({ target =>
     target.startsWith(input) match {
@@ -18,8 +18,8 @@ object Parser {
 }
 
 
-sealed abstract class ParseResult
+sealed abstract class ParseResult[+T]
 
-final case class ParseSuccess[T](val result: T, val next: String) extends ParseResult
+final case class ParseSuccess[T](val result: T, val next: String) extends ParseResult[T]
 
-final case class ParseFailure(val errorMessage: String) extends ParseResult
+final case class ParseFailure(val errorMessage: String) extends ParseResult[Nothing]
