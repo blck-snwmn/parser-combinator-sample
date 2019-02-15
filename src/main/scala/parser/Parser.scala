@@ -1,9 +1,25 @@
 package parser
 
+import scala.collection.mutable
+
 class Parser[T](parser: String => ParseResult[T]) {
   def parse(target: String): ParseResult[T] = {
     parser(target)
   }
+
+  def many(): Parser[List[T]] = Parser({ target =>
+    def parseRecursively(result: mutable.ListBuffer[T], next: String): ParseResult[List[T]] = {
+      parse(next) match {
+        case ParseSuccess(r, n) => {
+          result += r
+          parseRecursively(result, n)
+        }
+        case ParseFailure(_) => new ParseSuccess(result.toList, next)
+      }
+    }
+
+    parseRecursively(mutable.ListBuffer.empty, target)
+  })
 }
 
 object Parser {
@@ -15,6 +31,10 @@ object Parser {
       case false => new ParseFailure(s"parse error. expected:$input")
     }
   })
+
+  def many(input: String): Parser[List[String]] = {
+    Parser(input).many
+  }
 }
 
 

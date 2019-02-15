@@ -18,4 +18,14 @@ class ParserSpec extends WordSpec with Matchers {
         new ParseFailure("parse error. expected:bbbb")
     }
   }
+  "many parser" should {
+    "return success" in {
+      Parser("a").many.parse("b") shouldBe a[ParseSuccess[_]]
+      Parser("a").many.parse("aa") shouldBe a[ParseSuccess[_]]
+      Parser("a").many.parse("aa") shouldBe
+        new ParseSuccess(List("a", "a"), "")
+      Parser("a").many.parse("aab") shouldBe
+        new ParseSuccess(List("a", "a"), "b")
+    }
+  }
 }
