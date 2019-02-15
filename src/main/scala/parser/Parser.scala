@@ -1,13 +1,13 @@
 package parser
 
-class Parser[T](parser: T => ParseResult[T]) {
-  def parse(target: T): ParseResult[T] = {
+class Parser[T](parser: String => ParseResult[T]) {
+  def parse(target: String): ParseResult[T] = {
     parser(target)
   }
 }
 
 object Parser {
-  def apply[T](parser: T => ParseResult[T]): Parser[T] = new Parser(parser)
+  def apply[T](parser: String => ParseResult[T]): Parser[T] = new Parser(parser)
 
   def apply(input: String): Parser[String] = Parser[String]({ target =>
     target.startsWith(input) match {
