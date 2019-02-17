@@ -19,8 +19,19 @@ class ParserSpec extends WordSpec with Matchers {
     }
   }
   "many parser" should {
-    "return success" in {
+    "no match" in {
       Parser("a").many.parse("b") shouldBe a[ParseSuccess[_]]
+      Parser("a").many.parse("b") shouldBe
+        new ParseSuccess(List(), "b")
+    }
+
+    "one match" in {
+      Parser("a").many.parse("a") shouldBe a[ParseSuccess[_]]
+      Parser("a").many.parse("a") shouldBe
+        new ParseSuccess(List("a"), "")
+    }
+
+    "more match" in {
       Parser("a").many.parse("aa") shouldBe a[ParseSuccess[_]]
       Parser("a").many.parse("aa") shouldBe
         new ParseSuccess(List("a", "a"), "")
