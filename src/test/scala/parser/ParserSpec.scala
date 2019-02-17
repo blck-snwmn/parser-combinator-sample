@@ -28,4 +28,22 @@ class ParserSpec extends WordSpec with Matchers {
         new ParseSuccess(List("a", "a"), "b")
     }
   }
+
+  "or parser" should {
+    "match first parser" in {
+      Parser("a").or(Parser("b")).parse("aa") shouldBe a[ParseSuccess[_]]
+      Parser("a").or(Parser("b")).parse("aa") shouldBe
+        new ParseSuccess("a", "a")
+    }
+
+    "match second parser" in {
+      Parser("a").or(Parser("b")).parse("ba") shouldBe a[ParseSuccess[_]]
+      Parser("a").or(Parser("b")).parse("ba") shouldBe
+        new ParseSuccess("b", "a")
+    }
+
+    "no match" in {
+      Parser("a").or(Parser("b")).parse("cab") shouldBe a[ParseFailure]
+    }
+  }
 }

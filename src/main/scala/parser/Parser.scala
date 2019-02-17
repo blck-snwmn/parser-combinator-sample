@@ -20,6 +20,13 @@ class Parser[T](parser: String => ParseResult[T]) {
 
     parseRecursively(mutable.ListBuffer.empty, target)
   }
+
+  def or(parser: Parser[T]): Parser[T] = Parser { target =>
+    this.parse(target) match {
+      case ParseSuccess(r, n) => new ParseSuccess(r, n)
+      case ParseFailure(_) => parser.parse(target)
+    }
+  }
 }
 
 object Parser {
