@@ -7,6 +7,13 @@ class Parser[T](parser: String => ParseResult[T]) {
     parser(target)
   }
 
+  def option(): Parser[Option[T]] = Parser { target =>
+    this.parse(target) match {
+      case ParseSuccess(r, n) => new ParseSuccess(Some(r), n)
+      case ParseFailure(_) => new ParseSuccess(None, target)
+    }
+  }
+
   def many(): Parser[List[T]] = Parser { target =>
     def parseRecursively(result: mutable.ListBuffer[T], next: String): ParseResult[List[T]] = {
       parse(next) match {

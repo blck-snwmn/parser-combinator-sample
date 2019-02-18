@@ -75,6 +75,16 @@ class ParserSpec extends WordSpec with Matchers {
     }
   }
 
+  "option parser" should {
+    "parse success" in {
+      Parser("a").option().parse("aa") shouldBe new ParseSuccess(Some("a"), "a")
+    }
+
+    "parse failure" in {
+      Parser("a").option().parse("bb") shouldBe new ParseSuccess(None, "bb")
+    }
+  }
+
   "parser combine" can {
     "or parser and many parser" should {
       "use or*3 -> many" in {
