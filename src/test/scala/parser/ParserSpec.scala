@@ -57,6 +57,24 @@ class ParserSpec extends WordSpec with Matchers {
       Parser("a").or(Parser("b")).parse("cab") shouldBe a[ParseFailure]
     }
   }
+
+  "seq parser" should {
+    "all success" in {
+      Parser("a").seq(Parser("b")).parse("ab") shouldBe
+        new ParseSuccess(("a", "b"), "")
+    }
+
+    "fail first parser" in {
+      Parser("a").seq(Parser("b")).parse("ba") shouldBe
+        new ParseFailure("parse error. expected:a")
+    }
+
+    "fail after parser" in {
+      Parser("a").seq(Parser("b")).parse("ac") shouldBe
+        new ParseFailure("parse error. expected:b")
+    }
+  }
+
   "parser combine" can {
     "or parser and many parser" should {
       "use or*3 -> many" in {

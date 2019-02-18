@@ -27,6 +27,18 @@ class Parser[T](parser: String => ParseResult[T]) {
       case ParseFailure(_) => parser.parse(target)
     }
   }
+
+  def seq[U](parser: Parser[U]): Parser[(T, U)] = Parser { target =>
+    this.parse(target) match {
+      case ParseSuccess(r1, n2) => {
+        parser.parse(n2) match {
+          case ParseSuccess(r2, n2) => new ParseSuccess((r1, r2), n2)
+          case failure@ParseFailure(_) => failure
+        }
+      }
+      case failure@ParseFailure(_) => failure
+    }
+  }
 }
 
 object Parser {
