@@ -85,6 +85,18 @@ class ParserSpec extends WordSpec with Matchers {
     }
   }
 
+  "map parser" should {
+    "parse success" in {
+      Parser("a").map(i => s"input is $i").parse("aa") shouldBe ParseSuccess("input is a", "a")
+    }
+    "parse another type except String" in {
+      Parser("12").map(i => i.toInt).parse("123") shouldBe ParseSuccess(12, "3")
+    }
+    "failure another parser" in {
+      Parser("a").map(i => s"input is $i").parse("b") shouldBe ParseFailure("parse error. expected:a")
+    }
+  }
+
   "parser combine" can {
     "or parser and many parser" should {
       "use or*3 -> many" in {

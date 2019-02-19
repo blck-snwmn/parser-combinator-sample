@@ -46,6 +46,13 @@ class Parser[T](parser: String => ParseResult[T]) {
       case failure@ParseFailure(_) => failure
     }
   }
+
+  def map[U](f: T => U): Parser[U] = Parser { target =>
+    this.parse(target) match {
+      case ParseSuccess(r, n) => ParseSuccess(f(r), n)
+      case failure@ParseFailure(_) => failure
+    }
+  }
 }
 
 object Parser {
