@@ -9,8 +9,8 @@ class Parser[T](parser: String => ParseResult[T]) {
 
   def option(): Parser[Option[T]] = Parser { target =>
     this.parse(target) match {
-      case ParseSuccess(r, n) => new ParseSuccess(Some(r), n)
-      case ParseFailure(_) => new ParseSuccess(None, target)
+      case ParseSuccess(r, n) => ParseSuccess(Some(r), n)
+      case ParseFailure(_) => ParseSuccess(None, target)
     }
   }
 
@@ -21,7 +21,7 @@ class Parser[T](parser: String => ParseResult[T]) {
           result += r
           parseRecursively(result, n)
         }
-        case ParseFailure(_) => new ParseSuccess(result.toList, next)
+        case ParseFailure(_) => ParseSuccess(result.toList, next)
       }
     }
 
@@ -39,7 +39,7 @@ class Parser[T](parser: String => ParseResult[T]) {
     this.parse(target) match {
       case ParseSuccess(r1, n2) => {
         parser.parse(n2) match {
-          case ParseSuccess(r2, n2) => new ParseSuccess((r1, r2), n2)
+          case ParseSuccess(r2, n2) => ParseSuccess((r1, r2), n2)
           case failure@ParseFailure(_) => failure
         }
       }
@@ -49,12 +49,12 @@ class Parser[T](parser: String => ParseResult[T]) {
 }
 
 object Parser {
-  def apply[T](parser: String => ParseResult[T]): Parser[T] = new Parser(parser)
+  def apply[T](parser: String => ParseResult[T]): Parser[T] = Parser(parser)
 
   def apply(input: String): Parser[String] = Parser[String] { target =>
     target.startsWith(input) match {
-      case true => new ParseSuccess[String](input, target.substring(input.length))
-      case false => new ParseFailure(s"parse error. expected:$input")
+      case true => ParseSuccess[String](input, target.substring(input.length))
+      case false => ParseFailure(s"parse error. expected:$input")
     }
   }
 
