@@ -97,6 +97,24 @@ class ParserSpec extends WordSpec with Matchers {
     }
   }
 
+  "select parser" should {
+    "parse success" in {
+      Parser.select(Set('a', 'b', 'c')).parse("acbcabdabc") shouldBe ParseSuccess("acbcab", "dabc")
+      Parser.select("abc").parse("acbcabdabc") shouldBe ParseSuccess("acbcab", "dabc")
+    }
+    "parse failure" in {
+      Parser.select(Set('a', 'b', 'c')).parse("dabc") shouldBe ParseFailure("parse error. expected in:Set(a, b, c)")
+      Parser.select("abc").parse("dabc") shouldBe ParseFailure("parse error. expected in:Set(a, b, c)")
+    }
+
+    "empty" in {
+      Parser.select(Set.empty[Char]).parse("abc") shouldBe ParseFailure("parse error. expected in:Set()")
+      Parser.select(Set.empty[Char]).parse("") shouldBe ParseFailure("parse error. expected in:Set()")
+      Parser.select("").parse("abc") shouldBe ParseFailure("parse error. expected in:Set()")
+      Parser.select("").parse("") shouldBe ParseFailure("parse error. expected in:Set()")
+    }
+  }
+
   "parser combine" can {
     "or parser and many parser" should {
       "use or*3 -> many" in {
@@ -112,6 +130,20 @@ class ParserSpec extends WordSpec with Matchers {
           .many
           .or(Parser("c").many())
           .parse("ac") shouldBe ParseSuccess(List("a"), "c")
+      }
+    }
+
+    "or, seq, many parser" should {
+      "use or, seq, many parser" in {
+        val parser = Parser("a").or(Parser("b")).many
+          .seq(Parser("c"))
+        parser.parse("acd") shouldBe
+          ParseSuccess((List("a"), "c"), "d")
+        parser.parse("bcd") shouldBe
+          ParseSuccess((List("b"), "c"), "d")
+        parser.parse("abbacd") shouldBe
+          ParseSuccess((List("a", "b", "b", "a"), "c"), "d")
+
       }
     }
   }

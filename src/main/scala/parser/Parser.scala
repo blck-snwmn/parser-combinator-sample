@@ -68,4 +68,23 @@ object Parser {
   def many(input: String): Parser[List[String]] = {
     Parser(input).many
   }
+
+  /** 入力がパラメータの各文字どれかと一致するか
+    *
+    * @param set
+    * @return
+    */
+  def select(set: Set[Char]): Parser[String] = Parser { target =>
+    target.takeWhile(set.contains(_)) match {
+      case "" => ParseFailure(s"parse error. expected in:$set")
+      case str@_ => ParseSuccess(str, target.substring(str.length))
+    }
+  }
+
+  /** 入力がパラメータの各文字どれかと一致するか
+    *
+    * @param str
+    * @return
+    */
+  def select(str: String): Parser[String] = select(str.toSet)
 }
