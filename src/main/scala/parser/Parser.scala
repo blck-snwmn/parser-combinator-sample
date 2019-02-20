@@ -56,7 +56,7 @@ class Parser[T](parser: String => ParseResult[T]) {
 }
 
 object Parser {
-  def apply[T](parser: String => ParseResult[T]): Parser[T] = Parser(parser)
+  def apply[T](parser: String => ParseResult[T]): Parser[T] = new Parser(parser)
 
   def apply(input: String): Parser[String] = Parser[String] { target =>
     target.startsWith(input) match {
