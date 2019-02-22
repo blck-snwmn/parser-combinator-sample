@@ -115,6 +115,16 @@ class ParserSpec extends WordSpec with Matchers {
     }
   }
 
+  "end parser" should {
+    "parse success" in {
+      Parser("a").end().parse("a") shouldBe ParseSuccess("a", "")
+    }
+
+    "parse failure" in {
+      Parser("a").end().parse("aa") shouldBe ParseFailure("parse error. unnecessary character at the end: a")
+    }
+  }
+
   "parser combine" can {
     "or parser and many parser" should {
       "use or*3 -> many" in {

@@ -53,6 +53,18 @@ class Parser[T](parser: String => ParseResult[T]) {
       case failure@ParseFailure(_) => failure
     }
   }
+
+  /** 終端パーサー
+    *
+    * パース結果後、パースされない文字列が残った場合、
+    *
+    */
+  def end(): Parser[T] = Parser { target =>
+    this.parse(target) match {
+      case ParseSuccess(_, n) if !n.isEmpty => ParseFailure(s"parse error. unnecessary character at the end: $n")
+      case result@_ => result
+    }
+  }
 }
 
 object Parser {
