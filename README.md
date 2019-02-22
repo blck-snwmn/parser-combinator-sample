@@ -1,2 +1,2 @@
 # parser-combinator-sample
-scala sample
+scala sample for study
