@@ -81,19 +81,19 @@ object Parser {
     Parser(input).many
   }
 
-  /** 入力がパラメータの各文字どれかと一致するか
+  /** 入力の先頭がパラメータの各文字どれかと一致するか
     *
     * @param set
     * @return
     */
   def select(set: Set[Char]): Parser[String] = Parser { target =>
-    target.takeWhile(set.contains(_)) match {
-      case "" => ParseFailure(s"parse error. expected in:$set")
-      case str@_ => ParseSuccess(str, target.substring(str.length))
+    set.find(c => target.startsWith(c.toString)) match {
+      case Some(c) => val str = c.toString; ParseSuccess(str, target.substring(str.length))
+      case None => ParseFailure(s"parse error. expected in:$set")
     }
   }
 
-  /** 入力がパラメータの各文字どれかと一致するか
+  /** 入力の先頭がパラメータの各文字どれかと一致するか
     *
     * @param str
     * @return
