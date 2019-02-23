@@ -100,18 +100,18 @@ class ParserSpec extends WordSpec with Matchers {
   "select parser" should {
     "parse success" in {
       Parser.select(Set('a', 'b', 'c')).parse("acbcabdabc") shouldBe ParseSuccess("acbcab", "dabc")
-      Parser.select("abc").parse("acbcabdabc") shouldBe ParseSuccess("acbcab", "dabc")
+      Parser.selectChar("abc").parse("acbcabdabc") shouldBe ParseSuccess("acbcab", "dabc")
     }
     "parse failure" in {
       Parser.select(Set('a', 'b', 'c')).parse("dabc") shouldBe ParseFailure("parse error. expected in:Set(a, b, c)")
-      Parser.select("abc").parse("dabc") shouldBe ParseFailure("parse error. expected in:Set(a, b, c)")
+      Parser.selectChar("abc").parse("dabc") shouldBe ParseFailure("parse error. expected in:Set(a, b, c)")
     }
 
     "empty" in {
       Parser.select(Set.empty[Char]).parse("abc") shouldBe ParseFailure("parse error. expected in:Set()")
       Parser.select(Set.empty[Char]).parse("") shouldBe ParseFailure("parse error. expected in:Set()")
-      Parser.select("").parse("abc") shouldBe ParseFailure("parse error. expected in:Set()")
-      Parser.select("").parse("") shouldBe ParseFailure("parse error. expected in:Set()")
+      Parser.selectChar("").parse("abc") shouldBe ParseFailure("parse error. expected in:Set()")
+      Parser.selectChar("").parse("") shouldBe ParseFailure("parse error. expected in:Set()")
     }
   }
 

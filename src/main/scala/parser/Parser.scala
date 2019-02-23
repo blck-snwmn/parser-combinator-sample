@@ -98,5 +98,5 @@ object Parser {
     * @param str
     * @return
     */
-  def select(str: String): Parser[String] = select(str.toSet)
+  def selectChar(str: String): Parser[String] = select(str.toSet)
 }
