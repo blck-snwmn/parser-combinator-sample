@@ -67,7 +67,7 @@ class Parser[T](parser: String => ParseResult[T]) {
     * @tparam U
     * @return parser instance
     */
-  def seq[U](parser: Parser[U]): Parser[(T, U)] = Parser { target =>
+  def seq[U](parser: => Parser[U]): Parser[(T, U)] = Parser { target =>
     this.parse(target) match {
       case ParseSuccess(r1, n2) => {
         parser.parse(n2) match {
