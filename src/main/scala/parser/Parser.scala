@@ -53,7 +53,7 @@ class Parser[T](parser: String => ParseResult[T]) {
     * @param parser
     * @return parser instance
     */
-  def or(parser: Parser[T]): Parser[T] = Parser { target =>
+  def or(parser: => Parser[T]): Parser[T] = Parser { target =>
     this.parse(target) match {
       case success@ParseSuccess(_, _) => success
       case ParseFailure(_) => parser.parse(target)
