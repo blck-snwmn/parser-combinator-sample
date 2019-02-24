@@ -112,10 +112,10 @@ object Parser {
   def apply[T](parser: String => ParseResult[T]): Parser[T] = new Parser(parser)
 
   def apply(input: String): Parser[String] = Parser[String] { target =>
-    target.startsWith(input) match {
-      case true => ParseSuccess[String](input, target.substring(input.length))
-      case false => ParseFailure(s"parse error. expected:$input")
-    }
+    if (target.startsWith(input))
+      ParseSuccess[String](input, target.substring(input.length))
+    else
+      ParseFailure(s"parse error. expected:$input")
   }
 
   /** input match many times
