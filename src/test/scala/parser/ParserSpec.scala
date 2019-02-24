@@ -99,8 +99,8 @@ class ParserSpec extends WordSpec with Matchers {
 
   "select parser" should {
     "parse success" in {
-      Parser.select(Set('a', 'b', 'c')).parse("acbcabdabc") shouldBe ParseSuccess("acbcab", "dabc")
-      Parser.selectChar("abc").parse("acbcabdabc") shouldBe ParseSuccess("acbcab", "dabc")
+      Parser.select(Set('a', 'b', 'c')).parse("acb") shouldBe ParseSuccess("a", "cb")
+      Parser.selectChar("abc").parse("bac") shouldBe ParseSuccess("b", "ac")
     }
     "parse failure" in {
       Parser.select(Set('a', 'b', 'c')).parse("dabc") shouldBe ParseFailure("parse error. expected in:Set(a, b, c)")
