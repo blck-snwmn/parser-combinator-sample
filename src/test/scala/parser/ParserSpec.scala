@@ -124,4 +124,37 @@ class ParserSpec extends WordSpec with Matchers {
       Parser("a").end().parse("aa") shouldBe ParseFailure("parse error. unnecessary character at the end: a")
     }
   }
+  "mathematical expression" should {
+    "calculate" in {
+      //とりあえずIntで扱える範囲で
+      def calc(l: Int, r: Int, operator: String): Int = {
+        operator match {
+          case "+" => l + r
+          case "-" => l - r
+          case _ => throw new Exception("error")
+        }
+      }
+
+      val numberParser = Parser.selectChar((1 to 9).mkString("")).map(n => n.toInt)
+      val operatorParser = Parser.selectChar("-+")
+
+      lazy val expressionParser: Parser[Int] = {
+        //カッコつきの式
+        lazy val expressionBucketsParser = Parser("(")
+          .seq(expressionParser)
+          .seq(Parser(")"))
+          .map(v => v._1._2)
+        //数値またはカッコつきの式
+        val atom = numberParser.or(expressionBucketsParser)
+        atom
+          .seq(operatorParser.seq(atom).many)
+          .map(v => {
+            v._2.foldLeft(v._1)((a, b) => calc(a, b._2, b._1))
+          })
+      }
+
+      expressionParser.end.parse("3+(1-2)+2+2-5") shouldBe ParseSuccess(1, "")
+      expressionParser.end.parse("(1-2)+2+2-") shouldBe ParseFailure("parse error. unnecessary character at the end: -")
+    }
+  }
 }
