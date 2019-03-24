@@ -22,14 +22,12 @@ class Parser[T](parser: String => ParseResult[T]) {
     *
     * @return parser instance
     */
-  def option(): Parser[Option[T]] = Parser {
+  def option(): Parser[Option[T]] = Parser[Option[T]] {
     target =>
-      this.parse(target) match {
-        case ParseSuccess(r, n) =>
-          ParseSuccess(Some(r), n)
-        case ParseFailure(_) =>
-          ParseSuccess(None, target)
-      }
+      this.parse(target).fold(
+        (r, n) => ParseSuccess(Some(r), n),
+        _ => ParseSuccess(None, target)
+      )
   }
 
   /** parse many times until parse fail
@@ -40,13 +38,13 @@ class Parser[T](parser: String => ParseResult[T]) {
   def many(): Parser[List[T]] = Parser {
     target =>
       def parseRecursively(result: mutable.ListBuffer[T], next: String): ParseResult[List[T]] = {
-        parse(next) match {
-          case ParseSuccess(r, n) =>
+        parse(next).fold(
+          (r, n) => {
             result += r
             parseRecursively(result, n)
-          case ParseFailure(_) =>
-            ParseSuccess(result.toList, next)
-        }
+          },
+          _ => ParseSuccess(result.toList, next)
+        )
       }
 
       parseRecursively(mutable.ListBuffer.empty, target)
@@ -59,12 +57,10 @@ class Parser[T](parser: String => ParseResult[T]) {
     */
   def or(parser: => Parser[T]): Parser[T] = Parser {
     target =>
-      this.parse(target) match {
-        case success@ParseSuccess(_, _) =>
-          success
-        case ParseFailure(_) =>
-          parser.parse(target)
-      }
+      this.parse(target).fold(
+        (r, n) => ParseSuccess(r, n),
+        _ => parser.parse(target)
+      )
   }
 
   /** after own parse, use args parser

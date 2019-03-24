@@ -16,6 +16,12 @@ sealed abstract class ParseResult[+T] {
     }
   }
 
+  def fold[U](fs: (T, String) => U, ff: String => U): U = {
+    this match {
+      case ParseSuccess(r, n) => fs(r, n)
+      case ParseFailure(m) => ff(m)
+    }
+  }
 }
 
 final case class ParseSuccess[T](val result: T, val next: String) extends ParseResult[T]
