@@ -37,6 +37,29 @@ class ParserSpec extends WordSpec with Matchers {
   }
 
   "or parser" should {
+    "do eager evaluation" in {
+      val changedValue = 1
+      var changeValue = 0
+      val evaluatedFun: String => ParseResult[String] = {
+        _ =>
+          changeValue = changedValue
+          ParseSuccess("", "")
+      }
+      Parser("b").or(Parser(evaluatedFun)).parse("aa")
+      changeValue shouldBe changedValue
+    }
+    "delay evaluation" in {
+      val expectedValue = 0
+      var nonChangeValue = expectedValue
+      val nonEvaluatedFun: String => ParseResult[String] = {
+        _ =>
+          nonChangeValue = 1
+          ParseSuccess("", "")
+      }
+      Parser("a").or(Parser(nonEvaluatedFun)).parse("aa")
+      nonChangeValue shouldBe expectedValue
+    }
+
     "match first parser" in {
       Parser("a").or(Parser("b")).parse("aa") shouldBe
         ParseSuccess("a", "a")
