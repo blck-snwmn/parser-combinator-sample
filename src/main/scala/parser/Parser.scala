@@ -74,20 +74,8 @@ class Parser[T](parser: String => ParseResult[T]) {
     * @tparam U
     * @return parser instance
     */
-  def seq[U](parser: => Parser[U]): Parser[(T, U)] = Parser {
-    target =>
-      this.parse(target) match {
-        case ParseSuccess(r1, n2) =>
-          parser.parse(n2) match {
-            case ParseSuccess(r2, n2) =>
-              ParseSuccess((r1, r2), n2)
-            case failure@ParseFailure(_) =>
-              failure
-          }
-        case failure@ParseFailure(_) =>
-          failure
-      }
-  }
+  def seq[U](parser: => Parser[U]): Parser[(T, U)] =
+    Parser(parse(_).flatMap((r1, n1) => parser.parse(n1).map((r1, _))))
 
   /** convert parse result
     *

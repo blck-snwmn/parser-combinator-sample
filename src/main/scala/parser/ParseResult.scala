@@ -8,6 +8,14 @@ sealed abstract class ParseResult[+T] {
       case _ => this.asInstanceOf[ParseResult[U]]
     }
   }
+
+  def flatMap[U](f: (T, String) => ParseResult[U]): ParseResult[U] = {
+    this match {
+      case ParseSuccess(r, n) => f(r, n)
+      case _ => this.asInstanceOf[ParseResult[U]]
+    }
+  }
+
 }
 
 final case class ParseSuccess[T](val result: T, val next: String) extends ParseResult[T]
