@@ -23,13 +23,18 @@ sealed abstract class ParseResult[+T] {
   class WithFilter(p: ((T, String)) => Boolean) {
     def map[U](f: ((T, String)) => (U, String)): ParseResult[U] = self match {
       case ParseSuccess(r, n) =>
-        val t = f((r, n))
-        ParseSuccess(t._1, t._2)
+        if (p((r, n))) {
+          val t = f((r, n))
+          ParseSuccess(t._1, t._2)
+        }
+        else ParseFailure("does not meet condition")
       case _ => self.asInstanceOf[ParseResult[U]]
     }
 
     def flatMap[U](f: ((T, String)) => ParseResult[U]): ParseResult[U] = self match {
-      case ParseSuccess(r, n) => f((r, n))
+      case ParseSuccess(r, n) =>
+        if (p((r, n))) f((r, n))
+        else ParseFailure("does not meet condition")
       case _ => self.asInstanceOf[ParseResult[U]]
     }
   }
