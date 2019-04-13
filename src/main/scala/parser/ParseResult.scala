@@ -12,7 +12,7 @@ sealed abstract class ParseResult[+T] {
     case _ => this.asInstanceOf[ParseResult[U]]
   }
 
-  def fold[U](fs: (T, String) => U, ff: String => U): U = this match {
+  def fold[U](ff: String => U, fs: (T, String) => U): U = this match {
     case ParseSuccess(r, n) => fs(r, n)
     case ParseFailure(m) => ff(m)
   }

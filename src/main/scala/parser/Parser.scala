@@ -25,8 +25,8 @@ class Parser[T](parser: String => ParseResult[T]) {
   def option(): Parser[Option[T]] = Parser[Option[T]] {
     target =>
       this.parse(target).fold(
-        (r, n) => ParseSuccess(Some(r), n),
-        _ => ParseSuccess(None, target)
+        _ => ParseSuccess(None, target),
+        (r, n) => ParseSuccess(Some(r), n)
       )
   }
 
@@ -39,11 +39,11 @@ class Parser[T](parser: String => ParseResult[T]) {
     target =>
       def parseRecursively(result: mutable.ListBuffer[T], next: String): ParseResult[List[T]] = {
         parse(next).fold(
+          _ => ParseSuccess(result.toList, next),
           (r, n) => {
             result += r
             parseRecursively(result, n)
-          },
-          _ => ParseSuccess(result.toList, next)
+          }
         )
       }
 
@@ -58,8 +58,8 @@ class Parser[T](parser: String => ParseResult[T]) {
   def or(parser: => Parser[T]): Parser[T] = Parser {
     target =>
       this.parse(target).fold(
-        (r, n) => ParseSuccess(r, n),
-        _ => parser.parse(target)
+        _ => parser.parse(target),
+        (r, n) => ParseSuccess(r, n)
       )
   }
 
