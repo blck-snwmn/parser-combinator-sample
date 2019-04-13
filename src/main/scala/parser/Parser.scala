@@ -70,8 +70,13 @@ class Parser[T](parser: String => ParseResult[T]) {
     * @tparam U
     * @return parser instance
     */
-  def seq[U](parser: => Parser[U]): Parser[(T, U)] =
-    Parser(parse(_).flatMap((r1, n1) => parser.parse(n1).map((r1, _))))
+  def seq[U](parser: => Parser[U]): Parser[(T, U)] = Parser {
+    target =>
+      for {
+        (r1, n1) <- parse(target)
+        (r2, n2) <- parser.parse(n1)
+      } yield (r1 -> r2) -> n2
+  }
 
   /** convert parse result
     *
