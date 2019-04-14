@@ -1,5 +1,6 @@
 package parser
 
+import scala.annotation.tailrec
 import scala.collection.mutable
 
 /** Does Parse using args function
@@ -35,16 +36,19 @@ class Parser[T](parser: String => ParseResult[T]) {
     *
     * @return always success parser
     */
+
   def many(): Parser[List[T]] = Parser {
     target =>
+      @tailrec
       def parseRecursively(result: mutable.ListBuffer[T], next: String): ParseResult[List[T]] = {
-        parse(next).fold(
-          _ => ParseSuccess(result.toList, next),
-          (r, n) => {
+        parse(next) match {
+          case ParseFailure(_) =>
+            ParseSuccess(result.toList, next)
+          case ParseSuccess(r, n) => {
             result += r
             parseRecursively(result, n)
           }
-        )
+        }
       }
 
       parseRecursively(mutable.ListBuffer.empty, target)
